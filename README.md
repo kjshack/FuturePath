@@ -1,11 +1,5 @@
-# FuturePath Five-Year Plan V3.3 Rebuilt
+# FuturePath Five-Year Plan V3.4 Guided
 
-This version was rebuilt from the stable V3.2 file.
+Adds optional sentence-starter support to each Year section on My Plan.
 
-Changes:
-- Combined Career/Education goals with Personal/Social goals on the Start page.
-- Removed Strengths and Growth from Timeline.
-- Removed Help I May Need from Career & Training.
-- Added job examples to all 16 career areas.
-- Renamed Independent Living Skills section.
-- Updated Check It headings.
+Students may insert a starter, but they must complete the sentence in their own words.
