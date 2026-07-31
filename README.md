@@ -1,17 +1,10 @@
-# FuturePath Five-Year Plan
+# FuturePath Five-Year Plan V3
 
-An interactive student-friendly Five-Year Plan prototype.
+## GitHub Pages
+1. Create a public GitHub repository.
+2. Upload `index.html` and `README.md` to the repository root.
+3. Open Settings → Pages.
+4. Choose Deploy from a branch.
+5. Select `main` and `/ (root)`, then Save.
 
-## Open locally
-
-Double-click `index.html` to open it in a web browser.
-
-## Publish with GitHub Pages
-
-1. Upload `index.html` to the root of a GitHub repository.
-2. Open **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Select the `main` branch and the `/ (root)` folder.
-5. Click **Save**.
-
-The site stores each student's progress in that browser's local storage. It does not currently send student information to a teacher database or sync between devices.
+This testing version stores answers in the browser only. Do not enter confidential student information on a public test site.
