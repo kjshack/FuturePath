@@ -1,9 +1,15 @@
-# FuturePath Five-Year Plan V3.1
+# FuturePath Five-Year Plan V3.2
 
-Changes:
-- Restored a separate home page.
-- Fixed timeline year checkbox ID collisions.
-- Simplified the printed cover page.
-- Moved Personal Goals to its own printed page with a large heading.
+This version corrects the page routing after the Home page was added.
 
-Upload `index.html` and `README.md` to the root of your GitHub repository.
+Page order:
+1. Home
+2. Start & Personal Goals
+3. Strengths & Growth
+4. My Five-Year Vision
+5. Career & Training
+6. Supports & Independent Living
+7. Timeline
+8. Check It
+9. My Plan
+10. Customize & Download
