@@ -1,5 +1,8 @@
-# FuturePath Five-Year Plan V3.4 Guided
+# FuturePath Five-Year Plan V3.6
 
-Adds optional sentence-starter support to each Year section on My Plan.
-
-Students may insert a starter, but they must complete the sentence in their own words.
+Changes:
+- Larger font for selectable choices.
+- Larger timeline keyword chips.
+- Larger student writing areas.
+- Larger text in Check It.
+- Larger print, HTML, and DOCX export text.
