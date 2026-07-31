@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuturePath Five-Year Plan Builder</title>
+<style>
+:root{
+  --navy:#17365d;--green:#4d8b57;--orange:#f2a23a;--purple:#7257a5;
+  --blue:#3d7ea6;--bg:#f4f7fb;--card:#fff;--text:#243447;--muted:#6c7a89;
+  --line:#dce4ed;--shadow:0 12px 30px rgba(23,54,93,.10)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:grid;grid-template-columns:285px 1fr;min-height:100vh}
+.sidebar{background:var(--navy);color:#fff;padding:24px;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:28px}
+.brand-badge{width:48px;height:48px;border-radius:14px;background:var(--orange);display:grid;place-items:center;font-size:25px;font-weight:800}
+.brand h1{font-size:19px;margin:0}.brand p{margin:4px 0 0;font-size:12px;opacity:.82}
+.nav{display:grid;gap:8px}
+.nav button{border:0;background:transparent;color:#dce8f5;text-align:left;padding:11px 12px;border-radius:10px}
+.nav button.active{background:#fff;color:var(--navy);font-weight:700}
+.nav button.done::after{content:" ✓";color:#9ee2a9}
+.sidebar-note{position:absolute;left:24px;right:24px;bottom:22px;font-size:12px;line-height:1.45;color:#d7e3ef}
+.main{padding:28px 36px 50px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:20px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--green);margin:0 0 5px}
+h2{margin:0;font-size:30px;color:var(--navy)}
+.progress{min-width:230px}
+.progress-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px;color:var(--muted)}
+.track{height:10px;background:#dfe6ee;border-radius:99px;overflow:hidden}
+.bar{height:100%;width:0;background:var(--green);transition:.25s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:30px;min-height:610px}
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:28px;align-items:center}
+.hero h3{font-size:35px;line-height:1.08;color:var(--navy);margin:10px 0 15px}
+.hero p{font-size:18px;line-height:1.55;color:var(--muted)}
+.roadmap{display:grid;gap:10px}.road-year{padding:15px;border-radius:14px;color:#fff;font-weight:800;text-align:center}
+.road-year:nth-child(1){background:#4d8b57}.road-year:nth-child(2){background:#3d7ea6}.road-year:nth-child(3){background:#7257a5}.road-year:nth-child(4){background:#c87934}.road-year:nth-child(5){background:#17365d}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+label.field{display:grid;gap:7px;font-weight:700;color:var(--navy)}
+input,select,textarea{width:100%;padding:12px 13px;border:1px solid #bfcbd8;border-radius:10px;background:#fff;color:var(--text)}
+textarea{min-height:95px;resize:vertical}
+.section-intro{max-width:760px;margin-bottom:22px}.section-intro h3{font-size:26px;color:var(--navy);margin:0 0 8px}.section-intro p{color:var(--muted);line-height:1.5;margin:0}
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.choice{border:2px solid var(--line);border-radius:14px;padding:16px;background:#fff;text-align:left;min-height:88px}
+.choice strong{display:block;color:var(--navy);margin-bottom:5px}.choice span{font-size:13px;color:var(--muted)}
+.choice.selected{border-color:var(--green);background:#f2faf3;box-shadow:0 0 0 2px rgba(77,139,87,.10)}
+.support-box{margin-top:18px;border:1px dashed #9eb3c7;border-radius:14px;padding:16px;background:#f8fbfe}
+.support-box summary{cursor:pointer;font-weight:800;color:var(--blue)}
+.suggestion-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.suggestion{border:1px solid #bad0df;background:#fff;color:var(--blue);padding:8px 10px;border-radius:99px}
+.goal-builder{display:grid;gap:18px}
+.goal-card{border:1px solid var(--line);border-radius:16px;padding:18px}
+.goal-card h4{color:var(--navy);margin:0 0 12px;font-size:19px}
+.mini{font-size:13px;color:var(--muted);margin:4px 0 12px}
+.timeline-list{display:grid;gap:12px}
+.timeline-item{display:grid;grid-template-columns:1fr 175px;gap:14px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:13px;background:#fbfcfe}
+.timeline-item strong{color:var(--navy)}.timeline-item small{display:block;color:var(--muted);margin-top:3px}
+.year-preview{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px}
+.year-column{border:1px solid var(--line);border-radius:15px;min-height:230px;padding:13px;background:#fafbfd}
+.year-column h4{text-align:center;color:var(--navy);margin:0 0 10px}
+.year-column .year-date{text-align:center;color:var(--muted);font-size:12px;margin-bottom:11px}
+.milestone{font-size:12px;padding:8px;border-radius:9px;background:#fff;border-left:4px solid var(--green);margin-bottom:8px}
+.plan-page{border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px;background:#fff}
+.plan-page h3{color:var(--navy);margin-top:0}.plan-page h4{color:var(--green);margin-bottom:6px}
+.plan-page ul{padding-left:20px;line-height:1.5}
+.actions{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
+.btn{border:0;border-radius:11px;padding:12px 18px;font-weight:800}
+.primary{background:var(--navy);color:#fff}.secondary{background:#e8eef5;color:var(--navy)}.success{background:var(--green);color:#fff}
+.notice{padding:12px 14px;border-radius:11px;background:#fff6e7;border:1px solid #f2d29b;color:#6f501a;margin-bottom:16px}
+.hidden{display:none!important}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative}.sidebar-note{display:none}.nav{grid-template-columns:repeat(4,1fr)}.main{padding:20px}.hero,.grid2{grid-template-columns:1fr}.choice-grid{grid-template-columns:1fr 1fr}.year-preview{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.progress{width:100%}}
+@media print{.sidebar,.topbar,.actions,.notice{display:none!important}.app{display:block}.main{padding:0}.card{box-shadow:none;border:0;padding:0}.plan-page{page-break-after:always;border:0;min-height:9in;padding:.4in}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-badge">5</div><div><h1>FuturePath</h1><p>Five-Year Plan Builder</p></div></div>
+  <nav class="nav" id="nav"></nav>
+  <div class="sidebar-note">Your answers save automatically on this computer. You can leave and return later.</div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div><p class="eyebrow" id="eyebrow">WELCOME</p><h2 id="title">Build My Future</h2></div>
+    <div class="progress"><div class="progress-row"><span id="stepText">Step 1 of 7</span><span id="percentText">0% complete</span></div><div class="track"><div class="bar" id="bar"></div></div></div>
+  </header>
+  <section class="card" id="content"></section>
+</main>
+</div>
+<script>
+const steps=[
+ {name:"Welcome",label:"WELCOME",title:"Build My Future"},
+ {name:"About Me",label:"DISCOVER ME",title:"What Fits Me?"},
+ {name:"My Future",label:"BUILD MY FUTURE",title:"Choose My Goals"},
+ {name:"Education",label:"LEARNING & SUPPORT",title:"How Will I Get There?"},
+ {name:"Timeline",label:"MY ROADMAP",title:"Place Goals Across Five Years"},
+ {name:"Check It",label:"REVIEW",title:"Does This Sound Like Me?"},
+ {name:"My Plan",label:"FINISHED PLAN",title:"My Five-Year Plan"}
+];
+const defaults={
+ studentName:"",grade:"",gradYear:new Date().getFullYear()+1,
+ interests:[],strengths:[],
+ careerChoice:"",educationChoice:"",livingChoice:"",transportChoice:"",moneyChoice:"",
+ supportChoice:[],personalGoals:[],
+ careerDetail:"",visionDetail:"",
+ milestones:[]
+};
+let state=Object.assign({},defaults,JSON.parse(localStorage.getItem("futurePathState")||"{}"));
+let current=Number(localStorage.getItem("futurePathStep")||0);
+
+const options={
+ interests:["Helping people","Animals","Computers","Fixing things","Art and creativity","Cooking","Sports and fitness","Music","Working outdoors"],
+ strengths:["Hard worker","Friendly","Creative","Patient","Good listener","Organized","Problem solver","Reliable","Independent"],
+ careers:["I have a career in mind","I have a few ideas","I want to explore careers","I am not sure yet"],
+ education:["Four-year university","Community college","Technical or trade school","Certificate program","Apprenticeship","On-the-job training","Military training","I am not sure yet"],
+ living:["Live with family","College dorm","Apartment alone","Apartment with roommate","Supported living","I am not sure yet"],
+ transport:["Drive my own car","Family or friends","Public transportation","Walk or bicycle","Ride service","Transportation support","I am not sure yet"],
+ money:["Earn spending money","Pay bills","Save for a car","Save for housing","Build emergency savings","Learn budgeting"],
+ supports:["Family","Teacher","Mentor","Job coach","Vocational Rehabilitation","School counselor","Tutor","College disability services"],
+ personal:["Have a pet","Build friendships","Have a relationship","Travel","Improve health","Join a club or community group","Learn to cook","Become more independent"]
+};
+function save(){localStorage.setItem("futurePathState",JSON.stringify(state));localStorage.setItem("futurePathStep",current)}
+function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function yearDate(i){return (Number(state.gradYear)||new Date().getFullYear()+1)+i}
+function choiceGrid(key,items,mode="multi",descriptions={}) {
+ return `<div class="choice-grid">${items.map(item=>`<button class="choice ${mode==="multi"?(state[key]||[]).includes(item):state[key]===item?"selected":""}" data-choice="${key}" data-value="${esc(item)}" data-mode="${mode}"><strong>${esc(item)}</strong>${descriptions[item]?`<span>${esc(descriptions[item])}</span>`:""}</button>`).join("")}</div>`
+}
+function renderNav(){
+ const nav=document.getElementById("nav");
+ nav.innerHTML=steps.map((s,i)=>`<button data-goto="${i}" class="${i===current?"active":""} ${i<current?"done":""}">${i+1}. ${s.name}</button>`).join("");
+}
+function render(){
+ renderNav();
+ document.getElementById("eyebrow").textContent=steps[current].label;
+ document.getElementById("title").textContent=steps[current].title;
+ document.getElementById("stepText").textContent=`Step ${current+1} of ${steps.length}`;
+ const pct=Math.round(current/(steps.length-1)*100);
+ document.getElementById("percentText").textContent=`${pct}% complete`;
+ document.getElementById("bar").style.width=pct+"%";
+ const c=document.getElementById("content");
+ c.innerHTML=screen(current)+actions();
+ bind();
+ save();
+}
+function screen(i){
+ if(i===0)return `<div class="hero"><div><span class="notice">Less typing. More choosing. One clear step at a time.</span><h3>Build a five-year plan without answering the same questions five times.</h3><p>Choose what you want for your future. Then place your goals on a five-year roadmap. You can change anything before printing your plan.</p><div class="grid2"><label class="field">Your name<input data-field="studentName" value="${esc(state.studentName)}" placeholder="Example: Jordan"></label><label class="field">Current grade<select data-field="grade"><option value="">Choose one</option>${[9,10,11,12].map(x=>`<option ${String(state.grade)===String(x)?"selected":""}>${x}</option>`).join("")}</select></label><label class="field">Expected graduation year<input type="number" data-field="gradYear" value="${esc(state.gradYear)}"></label></div></div><div class="roadmap">${["Year 1: Start","Year 2: Learn","Year 3: Grow","Year 4: Build Independence","Year 5: Move Forward"].map(x=>`<div class="road-year">${x}</div>`).join("")}</div></div>`;
+ if(i===1)return `<div class="section-intro"><h3>Choose what sounds like you.</h3><p>You do not need to write full sentences. Click as many as you want.</p></div><h4>Things I enjoy</h4>${choiceGrid("interests",options.interests)}<h4 style="margin-top:25px">My strengths</h4>${choiceGrid("strengths",options.strengths)}`;
+ if(i===2)return `<div class="section-intro"><h3>Choose the future goals that fit you right now.</h3><p>“I am not sure yet” is a real answer. Plans can change.</p></div>
+ <div class="goal-builder">
+ <div class="goal-card"><h4>Work and Career</h4>${choiceGrid("careerChoice",options.careers,"single")}<label class="field" style="margin-top:14px">Career idea or type of work<input data-field="careerDetail" value="${esc(state.careerDetail)}" placeholder="Example: veterinary assistant, mechanic, childcare, office work"></label><details class="support-box"><summary>Need help getting started?</summary><div class="suggestion-row">${["working with animals","helping children","repairing cars","working with computers","cooking food","working in an office"].map(x=>`<button class="suggestion" data-fill="careerDetail" data-text="${x}">${x}</button>`).join("")}</div></details></div>
+ <div class="goal-card"><h4>Living</h4>${choiceGrid("livingChoice",options.living,"single")}</div>
+ <div class="goal-card"><h4>Transportation</h4>${choiceGrid("transportChoice",options.transport,"single")}</div>
+ <div class="goal-card"><h4>Money</h4>${choiceGrid("moneyChoice",options.money,"single")}</div>
+ <div class="goal-card"><h4>Personal Goals</h4>${choiceGrid("personalGoals",options.personal)}</div>
+ </div>`;
+ if(i===3)return `<div class="section-intro"><h3>Choose how you may learn and who may help you.</h3><p>This includes formal education and less formal supports.</p></div><h4>Education or training</h4>${choiceGrid("educationChoice",options.education,"single")}<h4 style="margin-top:25px">People or services that may help</h4>${choiceGrid("supportChoice",options.supports)}<label class="field" style="margin-top:24px">In one sentence, what do you hope your life will be like in five years?<textarea data-field="visionDetail" placeholder="Example: I hope to have a job I like, manage my own money, and live more independently.">${esc(state.visionDetail)}</textarea></label><details class="support-box"><summary>Need help getting started?</summary><div class="suggestion-row">${["I hope to have a steady job and earn my own money.","I hope to finish training and work in a career I enjoy.","I hope to live more independently and manage my daily life.","I hope to keep learning while I build work experience."].map(x=>`<button class="suggestion" data-fill="visionDetail" data-text="${esc(x)}">${esc(x)}</button>`).join("")}</div></details>`;
+ if(i===4){ensureMilestones();return `<div class="section-intro"><h3>When might each goal happen?</h3><p>Choose a year for each milestone. The plan will organize everything for you.</p></div><div class="timeline-list">${state.milestones.map((m,idx)=>`<div class="timeline-item"><div><strong>${esc(m.text)}</strong><small>${esc(m.category)}</small></div><select data-milestone="${idx}">${[1,2,3,4,5].map(y=>`<option value="${y}" ${Number(m.year)===y?"selected":""}>Year ${y} — ${yearDate(y-1)}</option>`).join("")}</select></div>`).join("")}</div>${timelinePreview()}`;}
+ if(i===5)return `<div class="section-intro"><h3>Here is what you chose.</h3><p>Use Back to change anything. Your plan will turn these choices into a five-year roadmap.</p></div><div class="grid2">
+ <div class="goal-card"><h4>About Me</h4><p><strong>Interests:</strong> ${esc((state.interests||[]).join(", ")||"Not selected")}</p><p><strong>Strengths:</strong> ${esc((state.strengths||[]).join(", ")||"Not selected")}</p></div>
+ <div class="goal-card"><h4>Career</h4><p>${esc(state.careerDetail||state.careerChoice||"Still exploring")}</p></div>
+ <div class="goal-card"><h4>Education or Training</h4><p>${esc(state.educationChoice||"Not selected")}</p></div>
+ <div class="goal-card"><h4>Living and Transportation</h4><p>${esc(state.livingChoice||"Not selected")}</p><p>${esc(state.transportChoice||"Not selected")}</p></div>
+ <div class="goal-card"><h4>Support</h4><p>${esc((state.supportChoice||[]).join(", ")||"Not selected")}</p></div>
+ <div class="goal-card"><h4>Five-Year Vision</h4><p>${esc(state.visionDetail||"Not written yet")}</p></div></div>${timelinePreview()}`;
+ return planOutput();
+}
+function ensureMilestones(){
+ const list=[];
+ const add=(text,category,year)=>{if(text&&text!=="I am not sure yet")list.push({text,category,year})};
+ add(state.educationChoice,"Education & Training",1);
+ add(state.careerDetail||state.careerChoice,"Employment",2);
+ add(state.moneyChoice,"Money",2);
+ add(state.transportChoice,"Transportation",3);
+ add(state.livingChoice,"Independent Living",4);
+ (state.personalGoals||[]).forEach((x,j)=>add(x,"Personal Goal",Math.min(5,3+j%3)));
+ const old=Object.fromEntries((state.milestones||[]).map(x=>[x.text,x.year]));
+ state.milestones=list.map(x=>({...x,year:old[x.text]||x.year}));
+}
+function timelinePreview(){
+ return `<div class="year-preview">${[1,2,3,4,5].map(y=>`<div class="year-column"><h4>Year ${y}</h4><div class="year-date">${yearDate(y-1)}</div>${(state.milestones||[]).filter(m=>Number(m.year)===y).map(m=>`<div class="milestone">${esc(m.text)}</div>`).join("")||'<div class="mini">No goal placed yet</div>'}</div>`).join("")}</div>`;
+}
+function planOutput(){
+ ensureMilestones();
+ return `<div class="notice">This version builds the plan automatically from the student's choices. The language stays brief so the final plan is readable.</div>
+ <div class="plan-page"><h3>${esc(state.studentName||"My")} Five-Year Plan</h3><p><strong>Expected graduation:</strong> ${esc(state.gradYear)}</p><h4>My Vision</h4><p>${esc(state.visionDetail||"I am building a future that fits my interests, strengths, and goals.")}</p><h4>About Me</h4><p><strong>Interests:</strong> ${esc((state.interests||[]).join(", ")||"Still exploring")}</p><p><strong>Strengths:</strong> ${esc((state.strengths||[]).join(", ")||"Still exploring")}</p></div>
+ ${[1,2,3,4,5].map(y=>{const ms=(state.milestones||[]).filter(m=>Number(m.year)===y);const names=["Getting Started","Learning and Growing","Building Skills","Building Independence","Moving Forward"];return `<div class="plan-page"><h3>Year ${y}: ${yearDate(y-1)} — ${names[y-1]}</h3>${ms.length?`<ul>${ms.map(m=>`<li><strong>${esc(m.category)}:</strong> ${esc(m.text)}</li>`).join("")}</ul>`:"<p>I will keep exploring and update this part of my plan as my goals become clearer.</p>"}<h4>People who may help me</h4><p>${esc((state.supportChoice||[]).join(", ")||"Family, teachers, and other trusted adults")}</p></div>`}).join("")}
+ <div class="plan-page"><h3>My Future at a Glance</h3>${timelinePreview()}<h4>My education or training path</h4><p>${esc(state.educationChoice||"I am still exploring my options.")}</p><h4>My career direction</h4><p>${esc(state.careerDetail||state.careerChoice||"I am still exploring careers.")}</p></div>`;
+}
+function actions(){
+ return `<div class="actions"><button class="btn secondary ${current===0?"hidden":""}" id="back">Back</button><div style="margin-left:auto;display:flex;gap:10px">${current===steps.length-1?'<button class="btn secondary" id="print">Print / Save PDF</button>':""}<button class="btn ${current===steps.length-2?"success":"primary"} ${current===steps.length-1?"hidden":""}" id="next">${current===steps.length-2?"Build My Plan":"Next"}</button></div></div>`;
+}
+function bind(){
+ document.querySelectorAll("[data-field]").forEach(el=>el.addEventListener("input",e=>{state[e.target.dataset.field]=e.target.value;save()}));
+ document.querySelectorAll("[data-choice]").forEach(btn=>btn.addEventListener("click",()=>{
+  const key=btn.dataset.choice,val=btn.dataset.value,mode=btn.dataset.mode;
+  if(mode==="single") state[key]=state[key]===val?"":val;
+  else {const a=state[key]||[];state[key]=a.includes(val)?a.filter(x=>x!==val):[...a,val]}
+  save();render();
+ }));
+ document.querySelectorAll("[data-fill]").forEach(btn=>btn.addEventListener("click",()=>{state[btn.dataset.fill]=btn.dataset.text;save();render()}));
+ document.querySelectorAll("[data-milestone]").forEach(sel=>sel.addEventListener("change",()=>{state.milestones[Number(sel.dataset.milestone)].year=Number(sel.value);save();render()}));
+ document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>{current=Number(b.dataset.goto);render()}));
+ document.getElementById("back")?.addEventListener("click",()=>{current=Math.max(0,current-1);render()});
+ document.getElementById("next")?.addEventListener("click",()=>{current=Math.min(steps.length-1,current+1);render()});
+ document.getElementById("print")?.addEventListener("click",()=>window.print());
+}
+render();
+</script>
+</body>
+</html>
