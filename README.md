@@ -1,10 +1,11 @@
-# FuturePath Five-Year Plan V3.3
+# FuturePath Five-Year Plan V3.3 Rebuilt
+
+This version was rebuilt from the stable V3.2 file.
 
 Changes:
-- Combined the former Start/Personal Goals and Five-Year Vision content.
-- Added Career / Education Goals and Personal / Social Goals headings.
-- Removed Strengths and Growth items from the Timeline.
+- Combined Career/Education goals with Personal/Social goals on the Start page.
+- Removed Strengths and Growth from Timeline.
 - Removed Help I May Need from Career & Training.
-- Added student-friendly job examples to all 16 career areas.
+- Added job examples to all 16 career areas.
 - Renamed Independent Living Skills section.
-- Updated Check It headings and organization.
+- Updated Check It headings.
