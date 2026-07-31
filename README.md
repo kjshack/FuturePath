@@ -1,8 +1,9 @@
-# FuturePath Five-Year Plan V3.6
+# FuturePath Five-Year Plan V3.7
 
 Changes:
-- Larger font for selectable choices.
-- Larger timeline keyword chips.
-- Larger student writing areas.
-- Larger text in Check It.
-- Larger print, HTML, and DOCX export text.
+- Added Spend more time with family.
+- Added Internship.
+- Added Rideshare.
+- Added scholarships, grants, and student loans.
+- Added driver's permit and driver's license.
+- Bolded career cluster names while keeping job examples regular weight.

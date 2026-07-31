@@ -30,7 +30,7 @@ body.blue{--a:#2563b5;--p:#eaf2ff}body.green{--a:#2f7c4b;--p:#e9f7ee}body.purple
 <main><header class="top"><div><p class="eyebrow" id="eye"></p><h2 id="title"></h2></div><div class="prog"><div class="prow"><span id="step"></span><span id="pct"></span></div><div class="track"><div class="bar" id="bar"></div></div></div></header><div class="flash" id="flash"></div><section class="card" id="content"></section><div class="actions"><button class="btn secondary" id="back">Back</button><div><button class="btn danger" id="reset">Start Over</button> <button class="btn primary" id="next">Next</button></div></div></main></div>
 <script src="https://unpkg.com/docx@9.5.1/build/index.umd.js"></script>
 <script>
-const STORE="futurePathV3_6_large_text";
+const STORE="futurePathV3_7_option_updates";
 const steps=[
 ["Home","WELCOME","FuturePath Five-Year Plan"],
 ["Start My Plan","START HERE","Start My Plan"],
@@ -42,7 +42,7 @@ const steps=[
 ["My Plan","WRITE MY PLAN","My Five-Year Plan"],
 ["Customize & Download","MAKE IT MINE","Customize & Download"]];
 const O={
-personal:["Have a pet","Travel somewhere new","Have a boyfriend, girlfriend, or significant other","Get married","Have a child or family","Make new friends","Spend more time with friends","Join a club, team, group, or community activity","Learn to play an instrument","Learn another language","Learn to cook","Improve my health or fitness","Volunteer","Develop a hobby","Become more confident","Become more independent","I am not sure yet"],
+personal:["Have a pet","Travel somewhere new","Have a boyfriend, girlfriend, or significant other","Get married","Have a child or family","Make new friends","Spend more time with friends","Spend more time with family","Join a club, team, group, or community activity","Learn to play an instrument","Learn another language","Learn to cook","Improve my health or fitness","Volunteer","Develop a hobby","Become more confident","Become more independent","I am not sure yet"],
 strengths:["Working with my hands","Working with words","Working with numbers","Working independently","Working with a team","Helping people","Working with children","Working with older adults","Paying attention to details","Being creative","Being dependable","Being patient","Being empathetic","Solving problems","Being flexible","Communicating","Following directions","Technology"],
 growth:["Speaking up for myself","Managing my time","Staying organized","Handling stress","Asking for help","Following directions","Completing tasks","Working with others","Communicating","Managing money","Using transportation","Cooking","Cleaning","Making appointments","Problem solving"],
 vision:["Working full time","Working part time","Attending a four-year university","Attending community college","Attending trade or technical school","Completing a certificate program","Serving in the military","Completing an apprenticeship","Receiving on-the-job training","Volunteering","Owning a business","Still exploring"],
@@ -64,18 +64,25 @@ career:[
 "Science, Engineering & Design — lab technician, engineer, drafter",
 "Transportation & Delivery — driver, mechanic, warehouse worker"
 ],
-training:["Four-year university","Community college","Technical or trade school","Certificate program","Apprenticeship","On-the-job training","Military training","Mentor","Job coach","I am not sure yet"],
+training:["Four-year university","Community college","Technical or trade school","Certificate program","Apprenticeship","Internship","On-the-job training","Military training","Mentor","Job coach","I am not sure yet"],
 help:["Family","Teacher","School counselor","Mentor","Job coach","Vocational Rehabilitation counselor","Tutor","College disability services","Coworker or supervisor","Transportation support"],
 living:["Live with family","College dorm","Apartment alone","Apartment with a roommate","Supported living","Own a home","I am not sure yet"],
-transport:["Drive my own car","Ride with family or friends","Public transportation","Walk or bicycle","Taxi or ride service","Transportation support","I am not sure yet"],
-money:["Open a bank account","Learn to make a budget","Save money","Pay my own bills","Build credit","Save for a car","Save for housing","I am not sure yet"],
-independent:["Cook meals","Shop for groceries","Clean my home","Do laundry","Manage medicine","Make appointments","Use transportation","Stay safe in the community","Manage my schedule","Ask for help when needed"]};
+transport:["Drive my own car","Ride with family or friends","Public transportation","Walk or bicycle","Taxi or ride service","Rideshare","Transportation support","I am not sure yet"],
+money:["Open a bank account","Learn to make a budget","Save money","Pay my own bills","Build credit","Save for a car","Save for housing","Get scholarships","Get grants","Get student loans","I am not sure yet"],
+independent:["Cook meals","Shop for groceries","Clean my home","Do laundry","Manage medicine","Make appointments","Use transportation","Get my driver's permit","Get my driver's license","Stay safe in the community","Manage my schedule","Ask for help when needed"]};
 const D={studentName:"",grade:"",gradYear:new Date().getFullYear()+1,personalGoals:[],personalOther:"",personalWhy:"",strengths:[],strengthsOther:"",growth:[],growthOther:"",vision:[],visionOther:"",careerAreas:[],careerAreasOther:"",careerChoice:"",training:[],trainingOther:"",trainingHelp:[],trainingHelpOther:"",living:[],livingOther:"",transport:[],transportOther:"",money:[],moneyOther:"",independent:[],independentOther:"",supports:[],supportsOther:"",timeline:{},yearWriting:["","","","",""],theme:"orange",decoration:"clean",images:{headshot:"",dream:"",career:"",year1:"",year2:"",year3:"",year4:"",year5:""}};
 let S;try{S=Object.assign(structuredClone(D),JSON.parse(localStorage.getItem(STORE)||"{}"));S.images=Object.assign({},D.images,S.images||{});S.timeline=S.timeline||{};S.yearWriting=[0,1,2,3,4].map(i=>(S.yearWriting||[])[i]||"")}catch(e){S=structuredClone(D)}let cur=Number(localStorage.getItem(STORE+"Step")||0); if(cur<0||cur>=steps.length)cur=0;
 const $=q=>document.querySelector(q),$$=q=>[...document.querySelectorAll(q)],esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 function save(){localStorage.setItem(STORE,JSON.stringify(S));localStorage.setItem(STORE+"Step",cur)}
 function flash(t){$("#flash").textContent=t;$("#flash").style.display="block";setTimeout(()=>$("#flash").style.display="none",2200)}
-function group(path,items,sel){return `<div class="choices">${items.map((x,i)=>`<div class="choice"><input id="${path}${i}" type="checkbox" data-array="${path}" value="${esc(x)}" ${(sel||[]).includes(x)?"checked":""}><label for="${path}${i}">${esc(x)}</label></div>`).join("")}</div>`}
+function displayChoice(path,x){
+if(path==="careerAreas"&&x.includes(" — ")){
+const parts=x.split(" — ");
+return `<strong>${esc(parts[0])}</strong><br><span style="font-weight:400">${esc(parts.slice(1).join(" — "))}</span>`
+}
+return esc(x)
+}
+function group(path,items,sel){return `<div class="choices">${items.map((x,i)=>`<div class="choice"><input id="${path}${i}" type="checkbox" data-array="${path}" value="${esc(x)}" ${(sel||[]).includes(x)?"checked":""}><label for="${path}${i}">${displayChoice(path,x)}</label></div>`).join("")}</div>`}
 function other(path,val,ph="Type another choice"){return `<div class="field other"><label>Other</label><input data-field="${path}" value="${esc(val)}" placeholder="${esc(ph)}"></div>`}
 function help(path,ideas){return `<details class="help"><summary>Need Help Getting Started?</summary><div class="chips">${ideas.map(x=>`<button type="button" class="chip" data-fill="${path}" data-text="${esc(x)}">${esc(x)}</button>`).join("")}</div></details>`}
 function all(a,o){return [...(a||[]),...(o&&String(o).trim()?[String(o).trim()]:[])]}
