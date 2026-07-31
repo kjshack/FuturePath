@@ -1,10 +1,9 @@
-# FuturePath Five-Year Plan V3
+# FuturePath Five-Year Plan V3.1
 
-## GitHub Pages
-1. Create a public GitHub repository.
-2. Upload `index.html` and `README.md` to the repository root.
-3. Open Settings → Pages.
-4. Choose Deploy from a branch.
-5. Select `main` and `/ (root)`, then Save.
+Changes:
+- Restored a separate home page.
+- Fixed timeline year checkbox ID collisions.
+- Simplified the printed cover page.
+- Moved Personal Goals to its own printed page with a large heading.
 
-This testing version stores answers in the browser only. Do not enter confidential student information on a public test site.
+Upload `index.html` and `README.md` to the root of your GitHub repository.
