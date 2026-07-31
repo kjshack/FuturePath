@@ -28,8 +28,9 @@ body.blue{--a:#2563b5;--p:#eaf2ff}body.green{--a:#2f7c4b;--p:#e9f7ee}body.purple
 </style></head>
 <body><div class="app"><aside class="side"><div class="brand"><div class="logo">5</div><div><h1>FuturePath</h1><p>Five-Year Plan Builder</p></div></div><nav id="nav"></nav><div class="note">Answers save automatically in this browser. Download saved answers before switching computers.</div></aside>
 <main><header class="top"><div><p class="eyebrow" id="eye"></p><h2 id="title"></h2></div><div class="prog"><div class="prow"><span id="step"></span><span id="pct"></span></div><div class="track"><div class="bar" id="bar"></div></div></div></header><div class="flash" id="flash"></div><section class="card" id="content"></section><div class="actions"><button class="btn secondary" id="back">Back</button><div><button class="btn danger" id="reset">Start Over</button> <button class="btn primary" id="next">Next</button></div></div></main></div>
+<script src="https://unpkg.com/docx@9.5.1/build/index.umd.js"></script>
 <script>
-const STORE="futurePathV3_4_guided";
+const STORE="futurePathV3_5_docx_theme";
 const steps=[
 ["Home","WELCOME","FuturePath Five-Year Plan"],
 ["Start My Plan","START HERE","Start My Plan"],
@@ -110,7 +111,7 @@ if(i===6)return `<div class="intro"><h3>Here is what you selected.</h3><p>Your c
 
 if(i===7)return `<div class="intro"><h3>Use the ideas above each box to write your plan in your own words.</h3><p>The keywords help you remember what you chose.</p></div>${[1,2,3,4,5].map(yearPlan).join("")}`;
 
-if(i===8)return `<div class="intro"><h3>Make your finished plan feel like yours.</h3><p>Choose a theme, add optional pictures, and download a polished copy.</p></div><div class="section"><div class="st">Color Theme</div><div class="themes">${["orange","blue","green","purple"].map(t=>`<div class="theme"><input id="t${t}" type="radio" name="theme" value="${t}" ${S.theme===t?"checked":""}><label for="t${t}">${t[0].toUpperCase()+t.slice(1)}</label></div>`).join("")}</div></div><div class="section"><div class="st">Decoration Style</div><div class="themes">${["clean","stars","path","confetti"].map(t=>`<div class="theme"><input id="d${t}" type="radio" name="dec" value="${t}" ${S.decoration===t?"checked":""}><label for="d${t}">${t[0].toUpperCase()+t.slice(1)}</label></div>`).join("")}</div></div><div class="section"><div class="st">Pictures</div><div class="uploads">${upload("headshot","Student photo")}${upload("dream","Dream picture")}${upload("career","Career picture")}${[1,2,3,4,5].map(y=>upload("year"+y,"Year "+y+" picture")).join("")}</div></div><div class="section"><button class="btn primary" id="print">Print / Save PDF</button> <button class="btn secondary" id="html">Download Finished HTML</button> <button class="btn secondary" id="data">Download Saved Answers</button></div><p class="hint">Avoid entering confidential student information while testing on a public GitHub site.</p>`;
+if(i===8)return `<div class="intro"><h3>Make your finished plan feel like yours.</h3><p>Choose a theme, add optional pictures, and download a polished copy.</p></div><div class="section"><div class="st">Color Theme</div><div class="themes">${["orange","blue","green","purple"].map(t=>`<div class="theme"><input id="t${t}" type="radio" name="theme" value="${t}" ${S.theme===t?"checked":""}><label for="t${t}">${t[0].toUpperCase()+t.slice(1)}</label></div>`).join("")}</div></div><div class="section"><div class="st">Decoration Style</div><div class="themes">${["clean","stars","path","confetti"].map(t=>`<div class="theme"><input id="d${t}" type="radio" name="dec" value="${t}" ${S.decoration===t?"checked":""}><label for="d${t}">${t[0].toUpperCase()+t.slice(1)}</label></div>`).join("")}</div></div><div class="section"><div class="st">Pictures</div><div class="uploads">${upload("headshot","Student photo")}${upload("dream","Dream picture")}${upload("career","Career picture")}${[1,2,3,4,5].map(y=>upload("year"+y,"Year "+y+" picture")).join("")}</div></div><div class="section"><button class="btn primary" id="print">Print / Save PDF</button> <button class="btn secondary" id="docx">Download Word DOCX</button> <button class="btn secondary" id="html">Download Finished HTML</button> <button class="btn secondary" id="data">Download Saved Answers</button></div><p class="hint">Avoid entering confidential student information while testing on a public GitHub site.</p>`;
 
 return `<p>Page not found.</p>`;
 }
@@ -155,11 +156,98 @@ return `<div class="yplan"><h3>Year ${y} — ${Number(S.gradYear||new Date().get
 }
 function upload(k,l){return `<div class="upload"><strong>${esc(l)}</strong><input type="file" accept="image/*" data-image="${k}">${S.images[k]?`<img src="${S.images[k]}" alt="${esc(l)}"><button type="button" class="chip" data-remove="${k}">Remove</button>`:""}</div>`}
 function bind(){$$("[data-step]").forEach(b=>b.onclick=()=>{cur=+b.dataset.step;save();render()});$$("[data-field]").forEach(x=>x.oninput=()=>{S[x.dataset.field]=x.value;save()});$$("[data-array]").forEach(x=>x.onchange=()=>{let p=x.dataset.array,v=$$(`[data-array="${CSS.escape(p)}"]:checked`).map(z=>z.value);if(p==="strengths"&&v.length>5){x.checked=false;flash("Please choose no more than five strengths.");v=$$(`[data-array="${CSS.escape(p)}"]:checked`).map(z=>z.value)}S[p]=v;save()});$$("[data-fill]").forEach(b=>b.onclick=()=>{S[b.dataset.fill]=b.dataset.text;save();render()});$$("[data-time]").forEach(x=>x.onchange=()=>{let id=x.dataset.time;S.timeline[id]=$$(`[data-time="${CSS.escape(id)}"]:checked`).map(z=>+z.value);save()});$$("[data-write]").forEach(x=>x.oninput=()=>{S.yearWriting[+x.dataset.write]=x.value;save()});
-$$("[data-starter]").forEach(b=>b.onclick=()=>{const i=+b.dataset.starter;const starter=b.dataset.text;const existing=(S.yearWriting[i]||"").trimEnd();S.yearWriting[i]=existing?existing+"\n\n"+starter:starter;save();render();setTimeout(()=>{const box=document.querySelector(`[data-write="${i}"]`);if(box){box.focus();box.selectionStart=box.selectionEnd=box.value.length}},0)});$$('input[name="theme"]').forEach(x=>x.onchange=()=>{S.theme=x.value;save();render()});$$('input[name="dec"]').forEach(x=>x.onchange=()=>{S.decoration=x.value;save()});$$("[data-image]").forEach(x=>x.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{S.images[x.dataset.image]=r.result;save();render()};r.readAsDataURL(f)});$$("[data-remove]").forEach(b=>b.onclick=()=>{S.images[b.dataset.remove]="";save();render()});if($("#startHome"))$("#startHome").onclick=()=>{cur=1;save();render()};if($("#print"))$("#print").onclick=printPlan;if($("#html"))$("#html").onclick=downloadPlan;if($("#data"))$("#data").onclick=()=>blob(JSON.stringify(S,null,2),"application/json",base()+"_saved_answers.json")}
+$$("[data-starter]").forEach(b=>b.onclick=()=>{const i=+b.dataset.starter;const starter=b.dataset.text;const existing=(S.yearWriting[i]||"").trimEnd();S.yearWriting[i]=existing?existing+"\n\n"+starter:starter;save();render();setTimeout(()=>{const box=document.querySelector(`[data-write="${i}"]`);if(box){box.focus();box.selectionStart=box.selectionEnd=box.value.length}},0)});$$('input[name="theme"]').forEach(x=>x.onchange=()=>{S.theme=x.value;save();render()});$$('input[name="dec"]').forEach(x=>x.onchange=()=>{S.decoration=x.value;save()});$$("[data-image]").forEach(x=>x.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{S.images[x.dataset.image]=r.result;save();render()};r.readAsDataURL(f)});$$("[data-remove]").forEach(b=>b.onclick=()=>{S.images[b.dataset.remove]="";save();render()});if($("#startHome"))$("#startHome").onclick=()=>{cur=1;save();render()};if($("#print"))$("#print").onclick=printPlan;if($("#docx"))$("#docx").onclick=downloadDocx;if($("#html"))$("#html").onclick=downloadPlan;if($("#data"))$("#data").onclick=()=>blob(JSON.stringify(S,null,2),"application/json",base()+"_saved_answers.json")}
 $("#back").onclick=()=>{if(cur>0){cur--;save();render()}};$("#next").onclick=()=>{if(cur<steps.length-1){cur++;save();render()}else flash("Your progress is saved.")};$("#reset").onclick=()=>{if(confirm("Clear all answers and start over?")){S=structuredClone(D);cur=0;localStorage.removeItem(STORE);render()}};
+function themeHex(){
+const colors={orange:"E87524",blue:"2563B5",green:"2F7C4B",purple:"7653B5"};
+return colors[S.theme]||colors.orange
+}
+function themeCss(){return "#"+themeHex()}
 function deco(){return S.decoration==="stars"?"★ ✦ ★":S.decoration==="path"?"● ─── ● ─── ●":S.decoration==="confetti"?"◆ ● ▲ ✦ ◆":"—"}function img(k){return S.images[k]?`<img src="${S.images[k]}" style="max-width:220px;max-height:180px;border-radius:14px">`:""}
-function finished(){return `<section class="print-page" style="text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center"><h1 style="font-size:42px;margin-bottom:18px">My Five-Year Plan</h1><h2 style="font-size:28px;margin:8px 0">${esc(S.studentName||"Student Name")}</h2><p style="font-size:18px">Expected graduation year: ${esc(S.gradYear)}</p>${img("headshot")}</section><section class="print-page"><h1 style="font-size:36px;color:var(--a)">My Personal Goals</h1><p style="font-size:20px;line-height:1.7">${esc(all(S.personalGoals,S.personalOther).join(" • ")||"Not selected")}</p><h2 style="color:var(--a)">Why These Goals Matter to Me</h2><p style="white-space:pre-wrap;line-height:1.65">${esc(S.personalWhy||"Not written yet.")}</p></section><section class="print-page"><h1>My Strengths & Growth</h1><h2>My Strengths</h2><p>${esc(all(S.strengths,S.strengthsOther).join(" • ")||"Not selected")}</p><h2>Areas I Want to Improve</h2><p>${esc(all(S.growth,S.growthOther).join(" • ")||"Not selected")}</p><h2>My Five-Year Vision</h2><p>${esc(all(S.vision,S.visionOther).join(" • ")||"Not selected")}</p></section><section class="print-page"><h1>Career & Training</h1>${img("career")}<h2>Career Areas</h2><p>${esc(all(S.careerAreas,S.careerAreasOther).join(" • ")||"Not selected")}</p><h2>Specific Job or Career</h2><p>${esc(S.careerChoice||"Not selected")}</p><h2>Education or Training</h2><p>${esc(all(S.training,S.trainingOther).join(" • ")||"Not selected")}</p></section>${[1,2,3,4,5].map(y=>`<section class="print-page"><h1>Year ${y} — ${Number(S.gradYear||new Date().getFullYear())+y-1}</h1>${img("year"+y)}<h2>My Ideas</h2><p>${esc(forYear(y).map(x=>x.text).join(" • ")||"No ideas assigned.")}</p><h2>My Plan</h2><p style="white-space:pre-wrap;line-height:1.65">${esc(S.yearWriting[y-1]||"Not written yet.")}</p></section>`).join("")}` }
-function printPlan(){let w=open("","_blank");w.document.write(`<!doctype html><html><head><title>Five-Year Plan</title><style>${document.querySelector("style").textContent}body{background:white}.print-page{max-width:8.5in;margin:auto}h1{color:var(--a)}</style></head><body class="${S.theme}">${finished()}<script>onload=()=>print()<\/script></body></html>`);w.document.close()}
-function downloadPlan(){let c=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(S.studentName)} Five-Year Plan</title><style>${document.querySelector("style").textContent}body{background:#eef2f7}.print-page{max-width:8.5in;margin:20px auto;background:white}</style></head><body class="${S.theme}"><div class="no-print" style="position:sticky;top:0;background:#172437;padding:12px;text-align:center"><button onclick="print()">Print / Save PDF</button></div>${finished()}</body></html>`;blob(c,"text/html",base()+"_five_year_plan.html")}
+function finished(){
+const c=themeCss();
+return `<section class="print-page" style="text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center"><h1 style="font-size:42px;margin-bottom:18px;color:${c}">My Five-Year Plan</h1><h2 style="font-size:28px;margin:8px 0;color:${c}">${esc(S.studentName||"Student Name")}</h2><p style="font-size:18px">Expected graduation year: ${esc(S.gradYear)}</p>${img("headshot")}</section>
+<section class="print-page"><h1 style="font-size:36px;color:${c}">My Personal Goals</h1><p style="font-size:20px;line-height:1.7">${esc(all(S.personalGoals,S.personalOther).join(" • ")||"Not selected")}</p><h2 style="color:${c}">Why These Goals Matter to Me</h2><p style="white-space:pre-wrap;line-height:1.65">${esc(S.personalWhy||"Not written yet.")}</p></section>
+<section class="print-page"><h1 style="color:${c}">My Strengths & Growth</h1><h2 style="color:${c}">My Strengths</h2><p>${esc(all(S.strengths,S.strengthsOther).join(" • ")||"Not selected")}</p><h2 style="color:${c}">Areas I Want to Improve</h2><p>${esc(all(S.growth,S.growthOther).join(" • ")||"Not selected")}</p><h2 style="color:${c}">Career / Education Goals</h2><p>${esc(all(S.vision,S.visionOther).join(" • ")||"Not selected")}</p></section>
+<section class="print-page"><h1 style="color:${c}">Career & Training</h1>${img("career")}<h2 style="color:${c}">Career Areas</h2><p>${esc(all(S.careerAreas,S.careerAreasOther).join(" • ")||"Not selected")}</p><h2 style="color:${c}">Specific Job or Career</h2><p>${esc(S.careerChoice||"Not selected")}</p><h2 style="color:${c}">Education or Training</h2><p>${esc(all(S.training,S.trainingOther).join(" • ")||"Not selected")}</p></section>
+${[1,2,3,4,5].map(y=>`<section class="print-page"><h1 style="color:${c}">Year ${y} — ${Number(S.gradYear||new Date().getFullYear())+y-1}</h1>${img("year"+y)}<h2 style="color:${c}">My Ideas</h2><p>${esc(forYear(y).map(x=>x.text).join(" • ")||"No ideas assigned.")}</p><h2 style="color:${c}">My Plan</h2><p style="white-space:pre-wrap;line-height:1.65">${esc(S.yearWriting[y-1]||"Not written yet.")}</p></section>`).join("")}`
+}
+function printPlan(){let w=open("","_blank");w.document.write(`<!doctype html><html><head><title>Five-Year Plan</title><style>${document.querySelector("style").textContent}body{background:white}.print-page{max-width:8.5in;margin:auto}h1{color:var(--a)}</style></head><body class="${S.theme}" style="--a:${themeCss()}">${finished()}<script>onload=()=>print()<\/script></body></html>`);w.document.close()}
+function downloadPlan(){let c=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(S.studentName)} Five-Year Plan</title><style>${document.querySelector("style").textContent}body{background:#eef2f7}.print-page{max-width:8.5in;margin:20px auto;background:white}</style></head><body class="${S.theme}" style="--a:${themeCss()}"><div class="no-print" style="position:sticky;top:0;background:#172437;padding:12px;text-align:center"><button onclick="print()">Print / Save PDF</button></div>${finished()}</body></html>`;blob(c,"text/html",base()+"_five_year_plan.html")}
+
+async function dataUriToBytes(uri){
+if(!uri)return null;
+const response=await fetch(uri);
+return new Uint8Array(await response.arrayBuffer())
+}
+async function downloadDocx(){
+if(!window.docx){flash("The Word exporter could not load. Check your internet connection and try again.");return}
+const {Document,Packer,Paragraph,TextRun,HeadingLevel,AlignmentType,ImageRun,PageBreak}=window.docx;
+const color=themeHex();
+const children=[];
+const addHeading=(text,level=HeadingLevel.HEADING_1,center=false)=>children.push(new Paragraph({heading:level,alignment:center?AlignmentType.CENTER:AlignmentType.LEFT,children:[new TextRun({text,bold:true,color})]}));
+const addText=(text,center=false)=>children.push(new Paragraph({alignment:center?AlignmentType.CENTER:AlignmentType.LEFT,spacing:{after:180},children:[new TextRun({text:String(text||"")})]}));
+const addList=(values)=>addText((values&&values.length)?values.join(" • "):"Not selected");
+const addImage=async(key,width=220,height=165)=>{
+if(!S.images[key])return;
+try{
+const data=await dataUriToBytes(S.images[key]);
+children.push(new Paragraph({alignment:AlignmentType.CENTER,children:[new ImageRun({data,transformation:{width,height}})]}))
+}catch(e){}
+};
+addHeading("My Five-Year Plan",HeadingLevel.TITLE,true);
+addHeading(S.studentName||"Student Name",HeadingLevel.HEADING_1,true);
+addText("Expected graduation year: "+(S.gradYear||""),true);
+await addImage("headshot",220,180);
+children.push(new Paragraph({children:[new PageBreak()]}));
+
+addHeading("My Personal Goals");
+addList(all(S.personalGoals,S.personalOther));
+addHeading("Why These Goals Matter to Me",HeadingLevel.HEADING_2);
+addText(S.personalWhy||"Not written yet.");
+children.push(new Paragraph({children:[new PageBreak()]}));
+
+addHeading("My Strengths & Growth");
+addHeading("My Strengths",HeadingLevel.HEADING_2);
+addList(all(S.strengths,S.strengthsOther));
+addHeading("Areas I Want to Improve",HeadingLevel.HEADING_2);
+addList(all(S.growth,S.growthOther));
+addHeading("Career / Education Goals",HeadingLevel.HEADING_2);
+addList(all(S.vision,S.visionOther));
+children.push(new Paragraph({children:[new PageBreak()]}));
+
+addHeading("Career & Training");
+await addImage("career",220,165);
+addHeading("Career Areas",HeadingLevel.HEADING_2);
+addList(all(S.careerAreas,S.careerAreasOther));
+addHeading("Specific Job or Career",HeadingLevel.HEADING_2);
+addText(S.careerChoice||"Not selected");
+addHeading("Education or Training",HeadingLevel.HEADING_2);
+addList(all(S.training,S.trainingOther));
+
+for(let y=1;y<=5;y++){
+children.push(new Paragraph({children:[new PageBreak()]}));
+addHeading(`Year ${y} — ${Number(S.gradYear||new Date().getFullYear())+y-1}`);
+await addImage("year"+y,220,165);
+addHeading("My Ideas",HeadingLevel.HEADING_2);
+addList(forYear(y).map(x=>x.text));
+addHeading("My Plan",HeadingLevel.HEADING_2);
+addText(S.yearWriting[y-1]||"Not written yet.")
+}
+const doc=new Document({
+styles:{default:{document:{run:{font:"Aptos",size:24}}},paragraphStyles:[
+{id:"Title",name:"Title",basedOn:"Normal",next:"Normal",run:{size:56,bold:true,color},paragraph:{spacing:{after:240}}},
+{id:"Heading1",name:"Heading 1",basedOn:"Normal",next:"Normal",quickFormat:true,run:{size:36,bold:true,color},paragraph:{spacing:{before:240,after:120}}},
+{id:"Heading2",name:"Heading 2",basedOn:"Normal",next:"Normal",quickFormat:true,run:{size:28,bold:true,color},paragraph:{spacing:{before:180,after:80}}}
+]},
+sections:[{properties:{page:{margin:{top:720,right:720,bottom:720,left:720}}},children}]
+});
+const out=await Packer.toBlob(doc);
+const a=document.createElement("a");
+a.href=URL.createObjectURL(out);
+a.download=base()+"_five_year_plan.docx";
+a.click();
+setTimeout(()=>URL.revokeObjectURL(a.href),1500)
+}
 function blob(c,t,n){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([c],{type:t}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}function base(){return(S.studentName||"student").replace(/[^a-z0-9]+/gi,"_")}render();
 </script></body></html>
